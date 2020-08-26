@@ -12,10 +12,9 @@ RUN apt-get update \
 
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-# RUN git clone https://github.com/wifiphisher/wifiphisher.git && git clone https://github.com/wifiphisher/roguehostapd.git
+# RUN git clone https://github.com/wifiphisher/wifiphisher.git
 
-RUN cd roguehostapd && python3 setup.py install && cd .. \
-	&& cd wifiphisher && python3 setup.py install && cd .. \
-	&& apt-get clean
+RUN cd wifiphisher && python3 setup.py install --record files.txt \
+	&& cd .. && apt-get clean
 
 CMD ["wifiphisher"]

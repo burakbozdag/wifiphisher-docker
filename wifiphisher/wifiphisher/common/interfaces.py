@@ -389,7 +389,7 @@ class NetworkManager(object):
             self._internet_access_enable = value
         else:
             raise InvalidValueError(value, bool)
-    
+
     def nm_unmanage(self, interface):
         """
         Set an interface to unmanaged.
@@ -442,9 +442,9 @@ class NetworkManager(object):
         if mode == "internet" or mode == "WPS":
             self._exclude_shutdown.add(interface_name)
         # raise an error if interface doesn't support the mode
-        if mode != "internet" and interface_adapter.is_managed_by_nm\
-                and self.internet_access_enable:
-                self.nm_unmanage(interface_name)
+        if mode != "internet" and interface_adapter.is_managed_by_nm \
+            and self.internet_access_enable:
+            self.nm_unmanage(interface_name)
         if mode == "monitor" and not interface_adapter.has_monitor_mode:
             raise InvalidInterfaceError(interface_name, mode)
         elif mode == "AP" and not interface_adapter.has_ap_mode:
@@ -581,10 +581,10 @@ class NetworkManager(object):
         for interface, adapter in list(self._name_to_object.items()):
             # check to make sure interface is not active and not already in the possible list
             if (interface not in self._active) and (
-                    adapter not in possible_adapters):
+                adapter not in possible_adapters):
                 # in case of perfect match case
                 if (adapter.has_ap_mode == has_ap_mode
-                        and adapter.has_monitor_mode == has_monitor_mode):
+                    and adapter.has_monitor_mode == has_monitor_mode):
                     possible_adapters.insert(0, adapter)
 
                 # in case of requested AP mode and interface has AP mode (Partial match)
@@ -604,7 +604,7 @@ class NetworkManager(object):
 
         for adapter in our_vifs + possible_adapters:
             if ((not adapter.is_managed_by_nm and self.internet_access_enable)
-                    or (not self.internet_access_enable)):
+                or (not self.internet_access_enable)):
                 chosen_interface = adapter.name
                 self._active.add(chosen_interface)
                 return chosen_interface
@@ -686,13 +686,13 @@ class NetworkManager(object):
                 number += 1
                 name = 'wfphshr-wlan' + str(number)
                 pyw.down(card)
-                monitor_card = pyw.devadd(card, name, 'monitor')
+                ap_card = pyw.devadd(card, name, 'AP')  # Edited for the specific scenario
                 done_flag = False
             # catch if wlan1 is already exist
             except pyric.error:
                 pass
 
-        self._vifs_add.add(monitor_card)
+        self._vifs_add.add(ap_card)
         return name
 
     def remove_vifs_added(self):
@@ -856,13 +856,13 @@ def is_managed_by_network_manager(interface_name):
     is_managed = False
     try:
         nmcli_process = Popen(['/bin/sh', '-c', 'export LC_ALL=C; nmcli dev; unset LC_ALL'],
-        stdout=constants.DN,
-        stderr=PIPE)
+                              stdout=constants.DN,
+                              stderr=PIPE)
         out, err = nmcli_process.communicate()
 
         if err == None and out != "":
             for l in out.splitlines():
-                #TODO: If the device is managed and user has nmcli installed,
+                # TODO: If the device is managed and user has nmcli installed,
                 # we can probably do a "nmcli dev set wlan0 managed no"
                 if interface_name in l:
                     if "unmanaged" not in l:
@@ -870,11 +870,11 @@ def is_managed_by_network_manager(interface_name):
                 else:
                     # Ignore until we make handle logging registers properly.
                     pass
-                    #logger.error("Failed to make NetworkManager ignore interface %s", interface_name)
+                    # logger.error("Failed to make NetworkManager ignore interface %s", interface_name)
         else:
             # Ignore until we make handle logging registers properly.
             pass
-            #logger.error("Failed to check if interface %s is managed by NetworkManager", interface_name)
+            # logger.error("Failed to check if interface %s is managed by NetworkManager", interface_name)
 
         nmcli_process.stdout.close();
 

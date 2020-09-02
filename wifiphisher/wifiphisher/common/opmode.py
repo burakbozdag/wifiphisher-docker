@@ -50,9 +50,9 @@ class OpMode(object):
         :rtype: None
         """
 
-        self._perfect_card, self._use_one_phy =\
-            interfaces.is_add_vif_required(args.interface, 
-                    args.internetinterface, args.wpspbc_assoc_interface)
+        self._perfect_card, self._use_one_phy = \
+            interfaces.is_add_vif_required(args.interface,
+                                           args.internetinterface, args.wpspbc_assoc_interface)
         self._check_args(args)
 
     def _check_args(self, args):
@@ -74,17 +74,17 @@ class OpMode(object):
                      'characters.')
 
         if args.handshake_capture and not os.path.isfile(
-                args.handshake_capture):
+            args.handshake_capture):
             sys.exit('[' + constants.R + '-' + constants.W +
                      '] Handshake capture does not exist.')
-        elif args.handshake_capture and not handshakeverify.\
-                is_valid_handshake_capture(args.handshake_capture):
+        elif args.handshake_capture and not handshakeverify. \
+            is_valid_handshake_capture(args.handshake_capture):
             sys.exit('[' + constants.R + '-' + constants.W +
                      '] Handshake capture does not contain valid handshake')
 
         if ((args.extensionsinterface and not args.apinterface) or
-                (not args.extensionsinterface and args.apinterface)) and \
-                not (args.noextensions and args.apinterface):
+            (not args.extensionsinterface and args.apinterface)) and \
+            not (args.noextensions and args.apinterface):
             sys.exit('[' + constants.R + '-' + constants.W +
                      '] --apinterface (-aI) and --extensionsinterface (-eI)'
                      '(or --noextensions (-nE)) are used in conjuction.')
@@ -106,7 +106,7 @@ class OpMode(object):
                      'of captures: ' + str(os.listdir(constants.LOCS_DIR)))
 
         if (args.mac_ap_interface and args.no_mac_randomization) or \
-                (args.mac_extensions_interface and args.no_mac_randomization):
+            (args.mac_extensions_interface and args.no_mac_randomization):
             sys.exit(
                 '[' + constants.R + '-' + constants.W +
                 '] --no-mac-randomization (-iNM) cannot work together with'
@@ -122,8 +122,8 @@ class OpMode(object):
         # do the frequency hopping
         if args.deauth_essid and self._use_one_phy:
             print(('[' + constants.R + '!' + constants.W +
-                  '] Only one card was found. Wifiphisher will deauth only '
-                  'on the target AP channel'))
+                   '] Only one card was found. Wifiphisher will deauth only '
+                   'on the target AP channel'))
 
         # args.wAI should be used with args.wE
         if args.wpspbc_assoc_interface and not args.wps_pbc:
@@ -204,6 +204,7 @@ class OpMode(object):
           i) AP, ii) Extensions (Monitor), iii) Extensions (Managed)
         """
 
+        """
         if not args.internetinterface and not args.noextensions:
             if not self._use_one_phy:
                 # check if there is WPS association interface
@@ -215,7 +216,7 @@ class OpMode(object):
                     logger.info("Starting OP_MODE1 (0x1)")
             else:
                 # TODO: We should not add any vifs here.
-                # These should happen after the interface 
+                # These should happen after the interface
                 # checks in main engine
                 if self._perfect_card is not None:
                     network_manager.add_virtual_interface(self._perfect_card)
@@ -242,6 +243,12 @@ class OpMode(object):
         if args.noextensions and not args.internetinterface:
             self.op_mode = constants.OP_MODE4
             logger.info("Starting OP_MODE4 (0x4)")
+        """
+
+        # Forcing OP_MODE3 for the specific scenario
+        network_manager.add_virtual_interface(self._perfect_card)
+        self.op_mode = constants.OP_MODE3
+        logger.info("Starting OP_MODE3 (0x3)")
 
     def internet_sharing_enabled(self):
         """
@@ -304,12 +311,11 @@ def validate_ap_interface(interface):
     :raises: argparse.ArgumentTypeError in case of invalid interface
     """
 
-    if not(pyric.pyw.iswireless(interface) and \
-        pyric.pyw.isinterface(interface) and \
-        interfaces.does_have_mode(interface, "AP")):
-
+    if not (pyric.pyw.iswireless(interface) and \
+            pyric.pyw.isinterface(interface) and \
+            interfaces.does_have_mode(interface, "AP")):
         raise argparse.ArgumentTypeError("Provided interface ({})"
                                          " either does not exist or"
                                          " does not support AP mode" \
-                                        .format(interface))
+                                         .format(interface))
     return interface

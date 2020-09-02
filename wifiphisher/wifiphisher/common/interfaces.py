@@ -804,10 +804,10 @@ def is_add_vif_required(main_interface, internet_interface, wpspbc_assoc_interfa
 
     # map the phy# to the virtual interface tuples
     for vif in [vif for vif in pyw.interfaces() if pyw.iswireless(vif)]:
-        # excluding the card that used for internet accessing
+        # excluding the card that used for internet accessing (not for this scenario)
         # setup basic card information
         score = 0
-        if vif == internet_interface or vif == wpspbc_assoc_interface:
+        if vif == wpspbc_assoc_interface:  # Deleted internet interface exclusion
             continue
         else:
             card = pyw.getcard(vif)
